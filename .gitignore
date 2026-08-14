@@ -1,0 +1,17 @@
+# Archivos locales de Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Credenciales y variables de entorno
+*.tfvars
+!example.tfvars
+.env
+
+# Directorios del sistema operativo o editores
+.DS_Store
+.vscode/
+# Proveedores y plugins descargados de Terraform
+.terraform/
+terraform/providers/
