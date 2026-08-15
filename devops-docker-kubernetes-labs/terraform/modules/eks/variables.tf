@@ -32,3 +32,13 @@ variable "node_desired_size" {
   type    = number
   default = 2
 }
+
+variable "cluster_endpoint_public_access" {
+  type    = bool
+  default = true
+}
+
+variable "cluster_endpoint_private_access" {
+  type    = bool
+  default = true
+}

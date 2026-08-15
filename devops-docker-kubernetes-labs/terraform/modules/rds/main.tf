@@ -22,7 +22,8 @@ ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    # Solo salida dentro de la VPC; sin acceso directo a internet.
+    cidr_blocks = ["10.0.0.0/16"]
   }
 }
 
@@ -36,7 +37,9 @@ resource "aws_db_instance" "main" {
   password               = var.password
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]
-  skip_final_snapshot    = true
+  storage_encrypted      = true
+  skip_final_snapshot    = false
+  final_snapshot_identifier = "app-postgres-final-${formatdate("YYYYMMDD-hhmm", timestamp())}"
 
   tags = {
     Name = "app-postgres-db"

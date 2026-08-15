@@ -29,10 +29,15 @@ module "eks" {
   source = "./modules/eks"
 
   cluster_name    = "cloudops-cluster"
-  cluster_version = "1.30"
-  
-  vpc_id          = module.vpc.vpc_id
-  subnet_ids      = module.vpc.private_subnet_ids
+  cluster_version = "1.31"
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnet_ids
+
+  # Endpoint privado obligatorio; el público queda deshabilitado para evitar
+  # exponer el plano de control a internet. Acceder vía VPN/bastion/Cloud9.
+  cluster_endpoint_public_access  = false
+  cluster_endpoint_private_access = true
 }
 
 module "rds" {

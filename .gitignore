@@ -15,3 +15,5 @@
 # Proveedores y plugins descargados de Terraform
 .terraform/
 terraform/providers/
+
+secret.yaml
