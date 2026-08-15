@@ -83,3 +83,10 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/935c7b06-8830-4a26-a576-41db2db7a145" />
 
 
+## Dia 2:
+### kubernetes 
+* este si fue dificil , me costo pero creo que lo entendi , a continuacion los servicios de aws
+
+#### deployments:
+
+##### API:

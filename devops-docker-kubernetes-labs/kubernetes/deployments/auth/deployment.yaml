@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: auth-deployment
   labels:
-    app: frontend
+    app: auth
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: auth
   template:
     metadata:
       labels:
-        app: frontend
+        app: auth
     spec:
       containers:
-      - name: frontend
-        image: tu-repositorio-ecr/frontend:latest
+      - name: auth
+        image: tu-repositorio-ecr/auth:latest
         ports:
-        - containerPort: 80
+        - containerPort: 4000

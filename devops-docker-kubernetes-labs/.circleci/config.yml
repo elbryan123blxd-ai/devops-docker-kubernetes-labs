@@ -1,0 +1,40 @@
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@8.2.1
+
+workflows:
+  build-and-push-services:
+    jobs:
+      - aws-ecr/build-and-push_image:
+          name: push-api
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+          repo: api
+          path: .
+          dockerfile: docker/api/Dockerfile
+          tag: latest
+
+      - aws-ecr/build-and-push_image:
+          name: push-auth
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+          repo: auth
+          path: .
+          dockerfile: docker/auth/Dockerfile
+          tag: latest
+
+      - aws-ecr/build-and-push_image:
+          name: push-frontend
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+          repo: frontend
+          path: .
+          dockerfile: docker/frontend/Dockerfile
+          tag: latest
