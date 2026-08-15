@@ -131,3 +131,10 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7b1bea9d-3e35-46f1-87e0-a22e456cc936" />
 * ahora si podemos lanzar
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/67520684-f6cc-4f30-83c2-75c8f46986f1" />
+
+* no le di a commit changes , para hacerles un resumen le pedi a opencode que me de mejores practicas de seguridad , como agregar archivos al gitignore o agregarle archivos nuevos a mis kubernetes por motivos de buenas practicas , ademas que configuro algunos puertos
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6a37260d-a1ec-4ef2-9374-1fc873687ed4" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2eae5baa-5ad2-4674-a02a-9534311685e7" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1c3c12a6-e851-4472-985b-b1d44c6d7eac" />
+
+* finalmente y como protip podemos usar a AWS Q
