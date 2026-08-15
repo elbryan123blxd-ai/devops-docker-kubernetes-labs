@@ -1,90 +1,96 @@
 version: 2.1
 
 orbs:
-  aws-ecr: circleci/aws-ecr@8.2.1
-  aws-eks: circleci/aws-eks@1.1.0
-  kubernetes: circleci/kubernetes@1.3.0
+  aws-cli: circleci/aws-cli@4.1.0
+  aws-eks: circleci/aws-eks@1.0.0
 
 jobs:
-  # Despliega la imagen construida (tag = SHA del commit) en el deployment indicado.
-  deploy:
+  test:
     docker:
-      - image: cimg/aws:2024.01
-    parameters:
-      deployment:
-        type: string
-      container:
-        type: string
-      repo:
-        type: string
+      - image: cimg/node:18.20
     steps:
-      - kubernetes/install-kubectl
-      - aws-eks/update-kubeconfig:
-          cluster-name: cloudops-cluster
-          aws-region: us-east-1
+      - checkout
       - run:
-          name: "Actualizar imagen a ${CIRCLE_SHA1}"
+          name: Run tests for each service
           command: |
-            kubectl set image deployment/<< parameters.deployment >> \
-              << parameters.container >>=499503541876.dkr.ecr.us-east-1.amazonaws.com/<< parameters.repo >>:${CIRCLE_SHA1}
+            for svc in api frontend worker; do
+              echo "=== Testing $svc ==="
+              cd "docker/$svc"
+              npm install
+              npm test
+              cd ../..
+            done
+
+  build-and-push:
+    docker:
+      - image: cimg/node:18.20
+    environment:
+      ECR_REGISTRY: "499503541876.dkr.ecr.us-east-1.amazonaws.com"
+      AWS_REGION: "us-east-1"
+    steps:
+      - checkout
+      - setup_remote_docker
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
+      - run:
+          name: Login to Amazon ECR
+          command: |
+            aws ecr get-login-password --region "$AWS_REGION" \
+              | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+      - run:
+          name: Build and push images (SHA + latest)
+          command: |
+            for svc in api frontend worker; do
+              echo "=== Building $svc ==="
+              docker build \
+                -t "$ECR_REGISTRY/$svc:${CIRCLE_SHA1}" \
+                -t "$ECR_REGISTRY/$svc:latest" \
+                -f "docker/$svc/Dockerfile" "docker/$svc"
+              docker push "$ECR_REGISTRY/$svc:${CIRCLE_SHA1}"
+              docker push "$ECR_REGISTRY/$svc:latest"
+            done
+
+  deploy:
+    executor: aws-eks/default
+    parameters:
+      cluster-name:
+        type: string
+        default: "cloudops-cluster"
+      aws-region:
+        type: string
+        default: "us-east-1"
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig:
+          aws-region: <<parameters.aws-region>>
+          cluster-name: <<parameters.cluster-name>>
+      - run:
+          name: Deploy to EKS with immutable SHA image
+          command: |
+            ECR="499503541876.dkr.ecr.us-east-1.amazonaws.com"
+            kubectl apply -f kubernetes/deployments
+            kubectl apply -f kubernetes/services/internal
+            kubectl apply -f kubernetes/services/ingress-nginx
+            kubectl apply -f kubernetes/services/network-policy.yaml
+            kubectl set image deployment/api-deployment \
+              api="$ECR/api:${CIRCLE_SHA1}"
+            kubectl set image deployment/frontend-deployment \
+              frontend="$ECR/frontend:${CIRCLE_SHA1}"
+            kubectl set image deployment/worker-deployment \
+              worker="$ECR/worker:${CIRCLE_SHA1}"
+            kubectl rollout status deployment/api-deployment --timeout=180s
+            kubectl rollout status deployment/frontend-deployment --timeout=180s
+            kubectl rollout status deployment/worker-deployment --timeout=180s
 
 workflows:
-  build-and-push-services:
+  build-test-deploy:
     jobs:
-      - aws-ecr/build-and-push_image:
-          name: push-api
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-          repo: api
-          path: docker/api
-          dockerfile: Dockerfile
-          # Tag inmutable = SHA del commit (evita :latest).
-          tag: "${CIRCLE_SHA1}"
-
-      - aws-ecr/build-and-push_image:
-          name: push-worker
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-          repo: worker
-          path: docker/worker
-          dockerfile: Dockerfile
-          tag: "${CIRCLE_SHA1}"
-
-      - aws-ecr/build-and-push_image:
-          name: push-frontend
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-          repo: frontend
-          path: docker/frontend
-          dockerfile: Dockerfile
-          tag: "${CIRCLE_SHA1}"
-
-      - deploy:
-          name: deploy-api
-          deployment: api-deployment
-          container: api
-          repo: api
+      - test
+      - build-and-push:
           requires:
-            - push-api
-
+            - test
       - deploy:
-          name: deploy-worker
-          deployment: worker-deployment
-          container: worker
-          repo: worker
           requires:
-            - push-worker
-
-      - deploy:
-          name: deploy-frontend
-          deployment: frontend-deployment
-          container: frontend
-          repo: frontend
-          requires:
-            - push-frontend
+            - build-and-push
