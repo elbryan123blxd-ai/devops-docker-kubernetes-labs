@@ -121,4 +121,13 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 ### Circle CI
 * archivo config.yaml de circle ci:
 <img width="1920" height="1080" alt="Captura de pantalla (6625)" src="https://github.com/user-attachments/assets/94f2a49c-bbdb-4a2f-92c5-01134dfb6681" />
->>>>>>> 814e05e3c97e4d698f702ad3ec7ad11b4f5cfcf4
+
+## AWS
+* Llego el momento de la verdad, levantare los servidore en aws , espero no se caiga nada
+### errores del codigo
+* era inevitable ,al parecer al errores en mi infraestructura
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ee806b93-4a68-4cad-b795-1344aa99a9f1" />
+* al final fue un problema de versionamiento de los nodos del cluster de eks
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7b1bea9d-3e35-46f1-87e0-a22e456cc936" />
+* ahora si podemos lanzar
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/67520684-f6cc-4f30-83c2-75c8f46986f1" />
