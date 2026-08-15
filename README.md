@@ -82,7 +82,11 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5c8ac929-0872-40a8-9ef9-badff619655c" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/935c7b06-8830-4a26-a576-41db2db7a145" />
 
+## Dia 2:
+### kubernetes 
+* este si fue dificil , me costo pero creo que lo entendi , a continuacion los servicios de aws
 
+<<<<<<< HEAD
 ## Dia 2:
 ### kubernetes 
 * este si fue dificil , me costo pero creo que lo entendi , a continuacion los servicios de aws
@@ -90,3 +94,31 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 #### deployments:
 
 ##### API:
+=======
+#### deployments:
+
+##### API:
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/999caffc-489b-4144-adab-d22825966e5c" />
+
+---
+
+##### AUTH:
+<img width="1920" height="1080" alt="Captura de pantalla (6602)" src="https://github.com/user-attachments/assets/304a4e16-b60b-444d-8306-976df83d1b42" />
+
+---
+
+#####  FRONTEND:
+<img width="1920" height="1080" alt="Captura de pantalla (6603)" src="https://github.com/user-attachments/assets/e50a02e9-877e-4aef-a5b9-4a7cbaea2349" />
+
+#### Services:
+
+##### ingres-nginx:
+<img width="1920" height="1080" alt="Captura de pantalla (6609)" src="https://github.com/user-attachments/assets/30b0a40d-0d87-495e-9f63-07f305452e48" />
+
+##### Internal:
+<img width="1920" height="1080" alt="Captura de pantalla (6611)" src="https://github.com/user-attachments/assets/2fff52b3-d50a-4c08-bed0-e9b73b3f1cc3" />
+
+### Circle CI
+* archivo config.yaml de circle ci:
+<img width="1920" height="1080" alt="Captura de pantalla (6625)" src="https://github.com/user-attachments/assets/94f2a49c-bbdb-4a2f-92c5-01134dfb6681" />
+>>>>>>> 814e05e3c97e4d698f702ad3ec7ad11b4f5cfcf4
