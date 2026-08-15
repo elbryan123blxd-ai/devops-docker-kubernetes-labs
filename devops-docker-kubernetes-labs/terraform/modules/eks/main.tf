@@ -17,7 +17,7 @@ eks_managed_node_groups = {
     desired_size = var.node_desired_size
 
     instance_types = [var.instance_type]
-    ami_type       = "AL2023_X64_STANDARD"
+    ami_type       = "AL2_x86_64"
   }
 }
 }

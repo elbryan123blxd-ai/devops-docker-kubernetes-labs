@@ -34,3 +34,17 @@ module "eks" {
   vpc_id          = module.vpc.vpc_id
   subnet_ids      = module.vpc.private_subnet_ids
 }
+
+module "rds" {
+  source = "./modules/rds"
+
+  vpc_id            = module.vpc.vpc_id
+  subnet_ids        = module.vpc.private_subnet_ids
+  allocated_storage = 20
+  engine            = "postgres"
+  engine_version    = "15"
+  instance_class    = "db.t3.micro"
+  db_name           = "appdb"
+  username          = "dbadmin"
+  password          = var.db_password
+}
