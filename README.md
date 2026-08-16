@@ -1,4 +1,4 @@
-# devops-docker-kubernetes-labs
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/54d1006d-05fd-4b41-aecd-b0874b6883a8" /># devops-docker-kubernetes-labs
 Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orquestación de contenedores.
 ## diagramas
 <img width="1600" height="1204" alt="image" src="https://github.com/user-attachments/assets/3197568e-eb35-4381-8333-0a8d8f1c0327" />
@@ -137,4 +137,5 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2eae5baa-5ad2-4674-a02a-9534311685e7" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1c3c12a6-e851-4472-985b-b1d44c6d7eac" />
 
-* finalmente y como protip podemos usar a AWS Q
+## Automatizacion pipeline
+* puse mis credenciales a github  y circle CI para crear repositorios y empezar el CI/CD de prueba
