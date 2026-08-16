@@ -36,7 +36,7 @@ module "eks" {
 
   # Endpoint privado obligatorio; el público queda deshabilitado para evitar
   # exponer el plano de control a internet. Acceder vía VPN/bastion/Cloud9.
-  cluster_endpoint_public_access  = false
+  cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 }
 
