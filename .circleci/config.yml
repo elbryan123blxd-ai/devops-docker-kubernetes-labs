@@ -31,9 +31,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_REGION
+          aws_access_key_id: $AWS_ACCESS_KEY_ID
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+          region: us-east-1
       - run:
           name: Login to Amazon ECR
           command: |
@@ -63,9 +63,10 @@ jobs:
         default: "us-east-1"
     steps:
       - checkout
-      - aws-eks/update-kubeconfig:
-          aws-region: <<parameters.aws-region>>
-          cluster-name: <<parameters.cluster-name>>
+      - run:
+          name: Update kubeconfig for EKS
+          command: |
+            aws eks update-kubeconfig --name "<<parameters.cluster-name>>" --region "<<parameters.aws-region>>"
       - run:
           name: Deploy to EKS with immutable SHA image
           command: |
