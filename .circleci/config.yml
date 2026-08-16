@@ -80,9 +80,12 @@ jobs:
           name: Deploy to EKS with immutable SHA image
           command: |
             ECR="499503541876.dkr.ecr.us-east-1.amazonaws.com"
-            kubectl apply -f kubernetes/deployments
-            kubectl apply -f kubernetes/services/internal
-            kubectl apply -f kubernetes/services/ingress-nginx
+            kubectl apply -f kubernetes/deployments/api/deployment.yaml
+            kubectl apply -f kubernetes/deployments/frontend/deployment.yaml
+            kubectl apply -f kubernetes/deployments/worker/deployment.yaml
+            kubectl apply -f kubernetes/services/internal/api-service.yaml
+            kubectl apply -f kubernetes/services/internal/frontend-service.yaml
+            kubectl apply -f kubernetes/services/ingress-nginx/ingress.yaml
             kubectl apply -f kubernetes/services/network-policy.yaml
             kubectl set image deployment/api-deployment \
               api="$ECR/api:${CIRCLE_SHA1}"
