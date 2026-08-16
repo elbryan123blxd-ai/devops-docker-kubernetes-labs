@@ -2,7 +2,6 @@ version: 2.1
 ## hola
 orbs:
   aws-cli: circleci/aws-cli@4.1.0
-  aws-eks: circleci/aws-eks@1.0.0
 
 jobs:
   test:
@@ -53,7 +52,8 @@ jobs:
             done
 
   deploy:
-    executor: aws-eks/default
+    docker:
+      - image: cimg/base:stable
     parameters:
       cluster-name:
         type: string
@@ -63,6 +63,15 @@ jobs:
         default: "us-east-1"
     steps:
       - checkout
+      - aws-cli/setup:
+          region: us-east-1
+      - run:
+          name: Install kubectl
+          command: |
+            KUBECTL_VER=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+            curl -L -o kubectl "https://dl.k8s.io/release/${KUBECTL_VER}/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/
       - run:
           name: Update kubeconfig for EKS
           command: |
