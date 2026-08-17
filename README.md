@@ -1,4 +1,3 @@
-
 Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orquestación de contenedores.
 ## diagramas
 <img width="1600" height="1204" alt="image" src="https://github.com/user-attachments/assets/3197568e-eb35-4381-8333-0a8d8f1c0327" />
@@ -143,3 +142,24 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 
 * ahora si estaba en otra rama
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/36d2aa09-9fd0-4650-adf3-1ce5cb7a7041" />
+* mi proyecto sigue fallando , ya  voy aca 3 horas :C
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/720118b8-f3e5-4255-9166-417f9f80f476" />
+* creo que encontre la causa , tenia dos ramas
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0868f387-202c-4e36-862f-6cfc11cbcc64" />
+
+* encontre el problema , el opencode habrio otra subcarpeta y mis pusheos no llegaban
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/662472e7-0f86-4e0b-9525-3752b19ce6af" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2f1da262-55b8-4893-a226-2af93b935f24" />
+
+* ahora el opencode corrige raices
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/484620b1-003e-430a-ab8d-6e22752fbc97" />
+
+* mis pipelies estan corriendo
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/64a95b5c-e306-4902-a37d-193904a02a9e" />
+
+* pero estan fallando , el opencode esta auditando
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/60c462a2-06bb-4935-9fbe-654f1a1fd7d4" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ea265183-fa3d-4f87-810d-bec1a8a8dfe7" />
+
+* faltan los pods de mi app EKS , para que lo entiendanmi ECR ya cargo , lo unico que falta esque cargue para mi Kubernetes tambien
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ac9f2219-7971-40c6-92c0-e9bf64cac3d7" />
