@@ -11,8 +11,8 @@ module "eks" {
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
-  # Admin automático para el creador del cluster. En producción, reemplazar por
-  # access_entries explícitos (principio de menor privilegio) y usar IRSA para
+  # Admin automatico para el creador del cluster. En produccion, reemplazar por
+  # access_entries explicitos (principio de menor privilegio) y usar IRSA para
   # los workloads en vez de dar permisos amplios al creador.
   enable_cluster_creator_admin_permissions = true
 
@@ -27,14 +27,25 @@ module "eks" {
     }
   }
 
-eks_managed_node_groups = {
-  default = {
-    min_size     = var.node_min_size
-    max_size     = var.node_max_size
-    desired_size = var.node_desired_size
+  eks_managed_node_groups = {
+    default = {
+      min_size     = var.node_min_size
+      max_size     = var.node_max_size
+      desired_size = var.node_desired_size
 
-    instance_types = [var.instance_type]
-    ami_type       = "AL2_x86_64"
+      instance_types = [var.instance_type]
+      ami_type       = "AL2_x86_64"
+    }
   }
 }
+
+# Los nodos del node group necesitan tirar imagenes de ECR, si no los pods
+# caen en ImagePullBackOff.
+data "aws_iam_policy" "ecr_read_only" {
+  arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "node_ecr_read_only" {
+  role       = module.eks.eks_managed_node_groups["default"].iam_role_name
+  policy_arn = data.aws_iam_policy.ecr_read_only.arn
 }

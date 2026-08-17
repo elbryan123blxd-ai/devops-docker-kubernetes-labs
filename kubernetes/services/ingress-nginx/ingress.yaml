@@ -1,32 +1,39 @@
+# Ingress HTTP-only (listo para lab sin dominio).
+# El ELB de ingress-nginx expone la app en su DNS publico sin necesidad de dominio.
+# Cuando tengas un dominio real + cert-manager, usa ingress-tls.example.yaml.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: main-ingress
+  namespace: default
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Lab sin TLS: no forzar redirect a HTTPS (el ELB es HTTP por defecto).
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # CORS por si el frontend llama a /api desde otro origen.
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type, Authorization"
+    # Headers de seguridad basicos.
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: DENY";
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - mi-app.local
-      secretName: mi-app-tls
   rules:
-  - host: mi-app.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-service
-            port:
-              number: 80
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: api-service
-            port:
-              number: 80
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80

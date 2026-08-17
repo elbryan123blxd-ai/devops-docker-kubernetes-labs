@@ -15,7 +15,7 @@ variable "subnet_ids" {
 }
 
 variable "instance_type" {
-  type    = string              # agregue esto
+  type    = string # agregue esto
   default = "t3.medium"
 }
 variable "node_min_size" {

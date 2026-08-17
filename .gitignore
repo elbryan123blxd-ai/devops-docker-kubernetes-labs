@@ -12,6 +12,9 @@
 # Directorios del sistema operativo o editores
 .DS_Store
 .vscode/
+
+# Dependencias de Node (se instalan en CI, no se versionan)
+node_modules/
 # Proveedores y plugins descargados de Terraform
 .terraform/
 terraform/providers/

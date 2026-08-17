@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node worker.js",
-    "test": "node --check worker.js"
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }

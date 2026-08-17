@@ -1,0 +1,41 @@
+# EJEMPLO: habilitar HTTPS real cuando tengas un dominio + cert-manager.
+# Requisitos:
+#   1) Un dominio apuntando (A o CNAME) al ELB de ingress-nginx.
+#   2) cert-manager instalado en el cluster:
+#      helm repo add jetstack https://charts.jetstack.io
+#      helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace \
+#        --set crds.enabled=true
+#   3) Reemplaza TU-DOMINIO.example.com por tu dominio real.
+#   4) Borra ingress.yaml (HTTP) y aplica este en su lugar.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: main-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - TU-DOMINIO.example.com
+      secretName: mi-app-tls
+  rules:
+    - host: TU-DOMINIO.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80

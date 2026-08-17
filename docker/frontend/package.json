@@ -4,6 +4,13 @@
   "private": true,
   "scripts": {
     "build": "mkdir -p dist && cp public/index.html dist/index.html",
-    "test": "npm run build"
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   }
 }

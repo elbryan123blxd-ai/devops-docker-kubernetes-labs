@@ -1,7 +1,8 @@
 version: 2.1
-## hola
+
 orbs:
   aws-cli: circleci/aws-cli@4.1.0
+  aws-oidc: circleci/aws-oidc@2
 
 jobs:
   test:
@@ -29,10 +30,11 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - aws-cli/setup:
-          aws_access_key_id: $AWS_ACCESS_KEY_ID
-          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
-          region: us-east-1
+      - aws-cli/install
+      # Asume el rol de AWS via OIDC (sin claves estaticas).
+      - circleci/aws-oidc/setup:
+          role-arn: $AWS_ROLE_ARN
+          aws-region: us-east-1
       - run:
           name: Login to Amazon ECR
           command: |
@@ -63,8 +65,10 @@ jobs:
         default: "us-east-1"
     steps:
       - checkout
-      - aws-cli/setup:
-          region: us-east-1
+      - aws-cli/install
+      - circleci/aws-oidc/setup:
+          role-arn: $AWS_ROLE_ARN
+          aws-region: <<parameters.aws-region>>
       - run:
           name: Install kubectl
           command: |
@@ -101,6 +105,20 @@ jobs:
             kubectl rollout status deployment/api-deployment --timeout=180s
             kubectl rollout status deployment/frontend-deployment --timeout=180s
             kubectl rollout status deployment/worker-deployment --timeout=180s
+      - run:
+          name: Smoke test (produccion alcanzable)
+          command: |
+            ELB=$(kubectl get svc ingress-nginx-controller -n ingress-nginx \
+              -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null)
+            echo "ELB=$ELB"
+            [ -z "$ELB" ] && echo "ELB aun no asignado" && exit 0
+            for i in $(seq 1 12); do
+              code=$(curl -s -o /dev/null -w "%{http_code}" "http://$ELB/" || true)
+              [ "$code" = "200" ] && break
+              sleep 10
+            done
+            echo "frontend /        -> $(curl -s -o /dev/null -w '%{http_code}' http://$ELB/)"
+            echo "api /api/health  -> $(curl -s -o /dev/null -w '%{http_code}' http://$ELB/api/health) (200 esperado)"
 
 workflows:
   build-test-deploy:
@@ -109,6 +127,14 @@ workflows:
       - build-and-push:
           requires:
             - test
+          context: deploy-prod
+          filters:
+            branches:
+              only: [main]
       - deploy:
           requires:
             - build-and-push
+          context: deploy-prod
+          filters:
+            branches:
+              only: [main]
