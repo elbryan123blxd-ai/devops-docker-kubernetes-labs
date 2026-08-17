@@ -34,9 +34,19 @@ jobs:
       - run:
           name: Assume AWS role via OIDC
           command: |
-            echo "export AWS_ACCESS_KEY_ID=$(aws sts assume-role-with-web-identity --role-arn "$AWS_ROLE_ARN" --role-session-name circleci-ecr --web-identity-token "$CIRCLE_OIDC_TOKEN" --duration-seconds 3600 --query Credentials.AccessKeyId --output text)" >> "$BASH_ENV"
-            echo "export AWS_SECRET_ACCESS_KEY=$(aws sts assume-role-with-web-identity --role-arn "$AWS_ROLE_ARN" --role-session-name circleci-ecr --web-identity-token "$CIRCLE_OIDC_TOKEN" --duration-seconds 3600 --query Credentials.SecretAccessKey --output text)" >> "$BASH_ENV"
-            echo "export AWS_SESSION_TOKEN=$(aws sts assume-role-with-web-identity --role-arn "$AWS_ROLE_ARN" --role-session-name circleci-ecr --web-identity-token "$CIRCLE_OIDC_TOKEN" --duration-seconds 3600 --query Credentials.SessionToken --output text)" >> "$BASH_ENV"
+            CREDS=$(aws sts assume-role-with-web-identity \
+              --role-arn "$AWS_ROLE_ARN" \
+              --role-session-name circleci-ecr \
+              --web-identity-token "$CIRCLE_OIDC_TOKEN" \
+              --duration-seconds 3600 \
+              --output text \
+              --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]')
+            AK=$(printf '%s' "$CREDS" | cut -d$'\t' -f1)
+            SK=$(printf '%s' "$CREDS" | cut -d$'\t' -f2)
+            ST=$(printf '%s' "$CREDS" | cut -d$'\t' -f3)
+            echo "export AWS_ACCESS_KEY_ID=$AK" >> "$BASH_ENV"
+            echo "export AWS_SECRET_ACCESS_KEY=$SK" >> "$BASH_ENV"
+            echo "export AWS_SESSION_TOKEN=$ST" >> "$BASH_ENV"
             echo "export AWS_REGION=$AWS_REGION" >> "$BASH_ENV"
       - run:
           name: Login to Amazon ECR
@@ -73,9 +83,19 @@ jobs:
       - run:
           name: Assume AWS role via OIDC
           command: |
-            echo "export AWS_ACCESS_KEY_ID=$(aws sts assume-role-with-web-identity --role-arn "$AWS_ROLE_ARN" --role-session-name circleci-deploy --web-identity-token "$CIRCLE_OIDC_TOKEN" --duration-seconds 3600 --query Credentials.AccessKeyId --output text)" >> "$BASH_ENV"
-            echo "export AWS_SECRET_ACCESS_KEY=$(aws sts assume-role-with-web-identity --role-arn "$AWS_ROLE_ARN" --role-session-name circleci-deploy --web-identity-token "$CIRCLE_OIDC_TOKEN" --duration-seconds 3600 --query Credentials.SecretAccessKey --output text)" >> "$BASH_ENV"
-            echo "export AWS_SESSION_TOKEN=$(aws sts assume-role-with-web-identity --role-arn "$AWS_ROLE_ARN" --role-session-name circleci-deploy --web-identity-token "$CIRCLE_OIDC_TOKEN" --duration-seconds 3600 --query Credentials.SessionToken --output text)" >> "$BASH_ENV"
+            CREDS=$(aws sts assume-role-with-web-identity \
+              --role-arn "$AWS_ROLE_ARN" \
+              --role-session-name circleci-deploy \
+              --web-identity-token "$CIRCLE_OIDC_TOKEN" \
+              --duration-seconds 3600 \
+              --output text \
+              --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]')
+            AK=$(printf '%s' "$CREDS" | cut -d$'\t' -f1)
+            SK=$(printf '%s' "$CREDS" | cut -d$'\t' -f2)
+            ST=$(printf '%s' "$CREDS" | cut -d$'\t' -f3)
+            echo "export AWS_ACCESS_KEY_ID=$AK" >> "$BASH_ENV"
+            echo "export AWS_SECRET_ACCESS_KEY=$SK" >> "$BASH_ENV"
+            echo "export AWS_SESSION_TOKEN=$ST" >> "$BASH_ENV"
             echo "export AWS_REGION=<<parameters.aws-region>>" >> "$BASH_ENV"
       - run:
           name: Install kubectl
