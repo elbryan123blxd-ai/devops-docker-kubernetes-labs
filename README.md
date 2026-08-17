@@ -163,3 +163,18 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 
 * faltan los pods de mi app EKS , para que lo entiendanmi ECR ya cargo , lo unico que falta esque cargue para mi Kubernetes tambien
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ac9f2219-7971-40c6-92c0-e9bf64cac3d7" />
+
+* agregando Helm  en el archivo main de IaC, aca le damos credenciales para poder comunicarse con EKS
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c5bc58ea-92a5-48ad-b356-96290ca22559" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/06335c41-2304-4c03-8d5f-2e72481104f3" />
+
+
+* luego le damos la indicacion de que instale paquetes a los EKS para produccion
+<img width="1024" height="576" alt="image" src="https://github.com/user-attachments/assets/5a673937-75a9-47a6-a154-d0840c2d01a4" />
+
+* agregamos tambien un OIDC en circle CI , esto nos permitira mayor seguridad pues usara un pase temporal que dura unos minutos , asi evitamos q se filtren mis llaves
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fbe277ed-6afe-4e47-a46a-0d62a3e168a0" />
+
+
+* Configuramos circle CI para que solo tenga PRIVILEGIOS MINIMOS para que solo pueda pushear las imagenes a ECR Y actualizar servidores de EKS por un tiempo temporal
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1b0cc084-f7fd-4a30-9c60-2771b4869b98" />
