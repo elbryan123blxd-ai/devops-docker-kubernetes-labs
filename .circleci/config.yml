@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   aws-cli: circleci/aws-cli@4.1.0
-  aws-oidc: circleci/aws-oidc@2
 
 jobs:
   test:
@@ -31,8 +30,8 @@ jobs:
       - checkout
       - setup_remote_docker
       - aws-cli/install
-      # Asume el rol de AWS via OIDC (sin claves estaticas).
-      - aws-oidc/setup:
+      # Asume el rol de AWS via OIDC (sin claves estaticas) usando aws-cli/setup.
+      - aws-cli/setup:
           role-arn: $AWS_ROLE_ARN
           aws-region: us-east-1
       - run:
@@ -66,7 +65,7 @@ jobs:
     steps:
       - checkout
       - aws-cli/install
-      - aws-oidc/setup:
+      - aws-cli/setup:
           role-arn: $AWS_ROLE_ARN
           aws-region: <<parameters.aws-region>>
       - run:
