@@ -123,9 +123,6 @@ resource "aws_iam_role" "circleci_deploy" {
         StringEquals = {
           "oidc.circleci.com/org/${var.circleci_org_id}:aud" = var.circleci_org_id
         }
-        StringLike = {
-          "oidc.circleci.com/org/${var.circleci_org_id}:sub" = "org:${var.circleci_org_id}:project:${var.circleci_project_slug}:*"
-        }
       }
     }]
   })
