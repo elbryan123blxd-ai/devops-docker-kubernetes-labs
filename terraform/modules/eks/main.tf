@@ -16,6 +16,12 @@ module "eks" {
   # los workloads en vez de dar permisos amplios al creador.
   enable_cluster_creator_admin_permissions = true
 
+  # Coincide con el cluster ya creado en AWS para no forzar su reemplazo.
+  bootstrap_self_managed_addons = false
+
+  # Access entries + access policies requieren el modo de autenticacion API.
+  authentication_mode = "API"
+
   node_security_group_additional_rules = {
     ingress_web_from_self = {
       description = "Node-to-node HTTP/HTTPS para backends del ingress"
