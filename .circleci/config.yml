@@ -32,7 +32,7 @@ jobs:
       - setup_remote_docker
       - aws-cli/install
       # Asume el rol de AWS via OIDC (sin claves estaticas).
-      - circleci/aws-oidc/setup:
+      - aws-oidc/setup:
           role-arn: $AWS_ROLE_ARN
           aws-region: us-east-1
       - run:
@@ -66,7 +66,7 @@ jobs:
     steps:
       - checkout
       - aws-cli/install
-      - circleci/aws-oidc/setup:
+      - aws-oidc/setup:
           role-arn: $AWS_ROLE_ARN
           aws-region: <<parameters.aws-region>>
       - run:
