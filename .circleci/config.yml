@@ -77,6 +77,11 @@ jobs:
           command: |
             aws eks update-kubeconfig --name "<<parameters.cluster-name>>" --region "<<parameters.aws-region>>"
       - run:
+          name: Create api-secret from CI variable
+          command: |
+            kubectl get secret api-secret >/dev/null 2>&1 || \
+              kubectl create secret generic api-secret --from-literal=token="${API_TOKEN}"
+      - run:
           name: Deploy to EKS with immutable SHA image
           command: |
             ECR="499503541876.dkr.ecr.us-east-1.amazonaws.com"

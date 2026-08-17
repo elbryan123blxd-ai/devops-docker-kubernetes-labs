@@ -18,6 +18,9 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
+      volumes:
+      - name: tmp
+        emptyDir: {}
       containers:
       - name: api
         image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/api:v1
@@ -29,6 +32,11 @@ spec:
             secretKeyRef:
               name: api-secret
               key: token
+        - name: HOME
+          value: /tmp
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
@@ -45,14 +53,12 @@ spec:
             cpu: "500m"
             memory: "256Mi"
         livenessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 3000
           initialDelaySeconds: 10
           periodSeconds: 15
         readinessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 3000
           initialDelaySeconds: 5
           periodSeconds: 10
