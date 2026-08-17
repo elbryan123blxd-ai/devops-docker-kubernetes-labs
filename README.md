@@ -178,3 +178,7 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 
 * Configuramos circle CI para que solo tenga PRIVILEGIOS MINIMOS para que solo pueda pushear las imagenes a ECR Y actualizar servidores de EKS por un tiempo temporal
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1b0cc084-f7fd-4a30-9c60-2771b4869b98" />
+
+* agregue una plantilla de HTTP pero todavia no esta lista porque no tengo un dominio , se usara mas tarde
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/32117191-60a2-4594-932c-6065ca9d1d76" />
+
