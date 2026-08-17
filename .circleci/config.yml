@@ -30,10 +30,20 @@ jobs:
       - checkout
       - setup_remote_docker
       - aws-cli/install
-      # Asume el rol de AWS via OIDC (sin claves estaticas) usando aws-cli/setup.
-      - aws-cli/setup:
-          role-arn: $AWS_ROLE_ARN
-          aws-region: us-east-1
+      # Asume el rol de AWS via OIDC (sin claves estaticas) usando el token OIDC de CircleCI.
+      - run:
+          name: Assume AWS role via OIDC
+          command: |
+            CREDS=$(aws sts assume-role-with-web-identity \
+              --role-arn "$AWS_ROLE_ARN" \
+              --role-session-name "circleci-ecr" \
+              --web-identity-token "$CIRCLE_OIDC_TOKEN" \
+              --duration-seconds 3600 \
+              --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
+              --output text)
+            echo "export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | cut -d' ' -f1)" >> "$BASH_ENV"
+            echo "export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | cut -d' ' -f2)" >> "$BASH_ENV"
+            echo "export AWS_SESSION_TOKEN=$(echo "$CREDS" | cut -d' ' -f3)" >> "$BASH_ENV"
       - run:
           name: Login to Amazon ECR
           command: |
@@ -65,9 +75,20 @@ jobs:
     steps:
       - checkout
       - aws-cli/install
-      - aws-cli/setup:
-          role-arn: $AWS_ROLE_ARN
-          aws-region: <<parameters.aws-region>>
+      # Asume el rol de AWS via OIDC (sin claves estaticas) usando el token OIDC de CircleCI.
+      - run:
+          name: Assume AWS role via OIDC
+          command: |
+            CREDS=$(aws sts assume-role-with-web-identity \
+              --role-arn "$AWS_ROLE_ARN" \
+              --role-session-name "circleci-deploy" \
+              --web-identity-token "$CIRCLE_OIDC_TOKEN" \
+              --duration-seconds 3600 \
+              --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
+              --output text)
+            echo "export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | cut -d' ' -f1)" >> "$BASH_ENV"
+            echo "export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | cut -d' ' -f2)" >> "$BASH_ENV"
+            echo "export AWS_SESSION_TOKEN=$(echo "$CREDS" | cut -d' ' -f3)" >> "$BASH_ENV"
       - run:
           name: Install kubectl
           command: |
