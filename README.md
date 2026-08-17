@@ -182,3 +182,6 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 * agregue una plantilla de HTTP pero todavia no esta lista porque no tengo un dominio , se usara mas tarde
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/32117191-60a2-4594-932c-6065ca9d1d76" />
 
+* opencode me recomendo agregar otra rama aparte de la main , solo en la main funcionara todo el sistema CI/CD , en la otra rama solo correra test de circle CI y te dira si no rompe nada ( ideal para 
+pruebas , agregar apis ,etc)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d054dfa4-bcf1-4f99-abc8-98483b7617b6" />
