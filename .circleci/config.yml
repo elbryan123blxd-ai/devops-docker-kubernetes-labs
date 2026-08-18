@@ -8,7 +8,7 @@ jobs:
     docker:
       - image: cimg/node:18.20
       # Postgres real para los tests de integracion de la API (CRUD productos).
-      - image: cimg/postgres:15.0
+      - image: postgres:15
         environment:
           POSTGRES_DB: appdb
           POSTGRES_USER: dbadmin
