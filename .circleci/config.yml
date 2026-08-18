@@ -145,9 +145,9 @@ jobs:
             kubectl apply -f kubernetes/services/internal/frontend-service.yaml
             kubectl apply -f kubernetes/services/ingress-nginx/ingress.yaml
             kubectl apply -f kubernetes/services/network-policy.yaml
-            kubectl rollout status deployment/api-deployment --timeout=180s
-            kubectl rollout status deployment/frontend-deployment --timeout=180s
-            kubectl rollout status deployment/worker-deployment --timeout=180s
+            kubectl rollout status deployment/api-deployment --timeout=300s
+            kubectl rollout status deployment/frontend-deployment --timeout=300s
+            kubectl rollout status deployment/worker-deployment --timeout=300s
       - run:
           name: Smoke test (produccion alcanzable)
           command: |

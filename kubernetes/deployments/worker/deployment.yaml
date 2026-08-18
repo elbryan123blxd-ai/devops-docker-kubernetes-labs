@@ -19,50 +19,50 @@ spec:
         runAsUser: 1000
         fsGroup: 1000
       containers:
-       - name: worker
+        - name: worker
           image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/worker:__SHA__
-         ports:
-         - containerPort: 4000
-         env:
-         - name: DB_HOST
-           valueFrom:
-             configMapKeyRef:
-               name: api-db-config
-               key: db_host
-         - name: DB_PORT
-           valueFrom:
-             configMapKeyRef:
-               name: api-db-config
-               key: db_port
-         - name: DB_NAME
-           valueFrom:
-             configMapKeyRef:
-               name: api-db-config
-               key: db_name
-         - name: DB_USER
-           valueFrom:
-             configMapKeyRef:
-               name: api-db-config
-               key: db_user
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: api-db-secret
-                key: password
-          - name: DB_SSL
-            value: "true"
+          ports:
+            - containerPort: 4000
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: api-db-config
+                  key: db_host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: api-db-config
+                  key: db_port
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: api-db-config
+                  key: db_name
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: api-db-config
+                  key: db_user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api-db-secret
+                  key: password
+            - name: DB_SSL
+              value: "true"
           securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 1000
-          capabilities:
-            drop:
-            - ALL
-        resources:
-          requests:
-            cpu: "50m"
-            memory: "64Mi"
-          limits:
-            cpu: "250m"
-            memory: "128Mi"
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
