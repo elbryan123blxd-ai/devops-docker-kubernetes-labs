@@ -47,6 +47,17 @@ app.get("/health", async (req, res) => {
   res.json({ status: "ok", db });
 });
 
+app.get("/api/health", async (req, res) => {
+  let db = "down";
+  try {
+    await pool.query("SELECT 1");
+    db = "up";
+  } catch (_) {
+    // ignora: reporta estado pero responde 200
+  }
+  res.json({ status: "ok", db });
+});
+
 app.get("/api/products", async (req, res) => {
   const { rows } = await pool.query("SELECT * FROM products ORDER BY id");
   res.json(rows);
