@@ -20,7 +20,7 @@ spec:
         fsGroup: 1000
       containers:
        - name: worker
-         image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/worker:v1
+          image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/worker:__SHA__
          ports:
          - containerPort: 4000
          env:
@@ -44,12 +44,14 @@ spec:
              configMapKeyRef:
                name: api-db-config
                key: db_user
-         - name: DB_PASSWORD
-           valueFrom:
-             secretKeyRef:
-               name: api-db-secret
-               key: password
-         securityContext:
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: api-db-secret
+                key: password
+          - name: DB_SSL
+            value: "true"
+          securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           runAsNonRoot: true

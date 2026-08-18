@@ -23,7 +23,7 @@ spec:
         emptyDir: {}
       containers:
       - name: api
-        image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/api:v1
+        image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/api:__SHA__
         ports:
         - containerPort: 3000
         env:
@@ -57,6 +57,8 @@ spec:
             secretKeyRef:
               name: api-db-secret
               key: password
+        - name: DB_SSL
+          value: "true"
         - name: HOME
           value: /tmp
         volumeMounts:

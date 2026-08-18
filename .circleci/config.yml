@@ -137,19 +137,14 @@ jobs:
           name: Deploy to EKS with immutable SHA image
           command: |
             ECR="499503541876.dkr.ecr.us-east-1.amazonaws.com"
-            kubectl apply -f kubernetes/deployments/api/deployment.yaml
-            kubectl apply -f kubernetes/deployments/frontend/deployment.yaml
-            kubectl apply -f kubernetes/deployments/worker/deployment.yaml
+            [ -z "$CIRCLE_SHA1" ] && echo "CIRCLE_SHA1 vacio" && exit 1
+            for svc in api frontend worker; do
+              sed "s/__SHA__/$CIRCLE_SHA1/" "kubernetes/deployments/$svc/deployment.yaml" | kubectl apply -f -
+            done
             kubectl apply -f kubernetes/services/internal/api-service.yaml
             kubectl apply -f kubernetes/services/internal/frontend-service.yaml
             kubectl apply -f kubernetes/services/ingress-nginx/ingress.yaml
             kubectl apply -f kubernetes/services/network-policy.yaml
-            kubectl set image deployment/api-deployment \
-              api="$ECR/api:${CIRCLE_SHA1}"
-            kubectl set image deployment/frontend-deployment \
-              frontend="$ECR/frontend:${CIRCLE_SHA1}"
-            kubectl set image deployment/worker-deployment \
-              worker="$ECR/worker:${CIRCLE_SHA1}"
             kubectl rollout status deployment/api-deployment --timeout=180s
             kubectl rollout status deployment/frontend-deployment --timeout=180s
             kubectl rollout status deployment/worker-deployment --timeout=180s
