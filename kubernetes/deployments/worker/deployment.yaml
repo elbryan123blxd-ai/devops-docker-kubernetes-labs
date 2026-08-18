@@ -19,11 +19,37 @@ spec:
         runAsUser: 1000
         fsGroup: 1000
       containers:
-      - name: worker
-        image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/worker:v1
-        ports:
-        - containerPort: 4000
-        securityContext:
+       - name: worker
+         image: 499503541876.dkr.ecr.us-east-1.amazonaws.com/worker:v1
+         ports:
+         - containerPort: 4000
+         env:
+         - name: DB_HOST
+           valueFrom:
+             configMapKeyRef:
+               name: api-db-config
+               key: db_host
+         - name: DB_PORT
+           valueFrom:
+             configMapKeyRef:
+               name: api-db-config
+               key: db_port
+         - name: DB_NAME
+           valueFrom:
+             configMapKeyRef:
+               name: api-db-config
+               key: db_name
+         - name: DB_USER
+           valueFrom:
+             configMapKeyRef:
+               name: api-db-config
+               key: db_user
+         - name: DB_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: api-db-secret
+               key: password
+         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           runAsNonRoot: true

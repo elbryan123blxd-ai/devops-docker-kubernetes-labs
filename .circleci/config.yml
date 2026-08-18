@@ -7,11 +7,31 @@ jobs:
   test:
     docker:
       - image: cimg/node:18.20
+      # Postgres real para los tests de integracion de la API (CRUD productos).
+      - image: cimg/postgres:15.0
+        environment:
+          POSTGRES_DB: appdb
+          POSTGRES_USER: dbadmin
+          POSTGRES_PASSWORD: Password123!_
     steps:
       - checkout
       - run:
+          name: Wait for postgres
+          command: |
+            for i in $(seq 1 30); do
+              if (exec 3<>/dev/tcp/localhost/5432) 2>/dev/null; then
+                echo "postgres up"; break
+              fi
+              sleep 2
+            done
+      - run:
           name: Run tests for each service
           command: |
+            export DB_HOST=localhost
+            export DB_PORT=5432
+            export DB_NAME=appdb
+            export DB_USER=dbadmin
+            export DB_PASSWORD=Password123!_
             for svc in api frontend worker; do
               echo "=== Testing $svc ==="
               cd "docker/$svc"

@@ -1,28 +1,42 @@
-process.env.API_TOKEN = "test-token";
 const request = require("supertest");
-const server = require("./server");
+const { app, pool, ensureSchema } = require("./server");
 
-afterAll(() => {
-  server.close();
+beforeAll(async () => {
+  await ensureSchema();
 });
 
-test("rechaza sin token (401)", async () => {
-  const res = await request(server).get("/");
-  expect(res.status).toBe(401);
-  expect(res.body.error).toBe("unauthorized");
+afterAll(async () => {
+  await pool.end();
 });
 
-test("responde 200 con Bearer correcto", async () => {
-  const res = await request(server)
-    .get("/")
-    .set("Authorization", "Bearer test-token");
+test("GET /api/products retorna una lista", async () => {
+  const res = await request(app).get("/api/products");
   expect(res.status).toBe(200);
-  expect(res.body.message).toBe("api ok");
+  expect(Array.isArray(res.body)).toBe(true);
 });
 
-test("rechaza token incorrecto (401)", async () => {
-  const res = await request(server)
-    .get("/")
-    .set("Authorization", "Bearer wrong");
-  expect(res.status).toBe(401);
+test("POST /api/products crea y GET por id lo devuelve", async () => {
+  const created = await request(app)
+    .post("/api/products")
+    .send({ name: "Test", description: "x", price: 5.5, stock: 3 });
+  expect(created.status).toBe(201);
+  expect(created.body.id).toBeDefined();
+
+  const got = await request(app).get(`/api/products/${created.body.id}`);
+  expect(got.status).toBe(200);
+  expect(got.body.name).toBe("Test");
+});
+
+test("POST sin name retorna 400", async () => {
+  const res = await request(app).post("/api/products").send({});
+  expect(res.status).toBe(400);
+});
+
+test("DELETE elimina el producto", async () => {
+  const created = await request(app).post("/api/products").send({ name: "ToDelete" });
+  const id = created.body.id;
+  const del = await request(app).delete(`/api/products/${id}`);
+  expect(del.status).toBe(204);
+  const got = await request(app).get(`/api/products/${id}`);
+  expect(got.status).toBe(404);
 });

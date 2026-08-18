@@ -27,6 +27,11 @@ provider "aws" {
 # providers de kubernetes/helm y para el access entry de CircleCI.
 data "aws_eks_cluster" "this" {
   name = module.eks.cluster_name
+
+  # El cluster se crea dentro de module.eks. Sin depends_on, Terraform intenta
+  # leer este data source en la fase de plan (cuando el cluster aun no existe)
+  # y falla con "couldn't find resource". Se fuerza la lectura diferida a apply.
+  depends_on = [module.eks]
 }
 
 provider "kubernetes" {
@@ -80,6 +85,7 @@ module "eks" {
   cluster_endpoint_private_access = true
 }
 
+# RDS Postgres para la app (tienda de productos).
 module "rds" {
   source = "./modules/rds"
 
@@ -92,6 +98,34 @@ module "rds" {
   db_name           = "appdb"
   username          = "dbadmin"
   password          = var.db_password
+}
+
+# Configuracion de conexion a RDS para la API (no sensible).
+# Creado por terraform para no hardcodear el endpoint en los manifests.
+resource "kubernetes_config_map" "api_db_config" {
+  metadata {
+    name      = "api-db-config"
+    namespace = "default"
+  }
+
+  data = {
+    db_host = module.rds.db_address
+    db_port = "5432"
+    db_name = "appdb"
+    db_user = "dbadmin"
+  }
+}
+
+# Password de la BD (sensible) inyectado a la API como Secret de Kubernetes.
+resource "kubernetes_secret" "api_db_secret" {
+  metadata {
+    name      = "api-db-secret"
+    namespace = "default"
+  }
+
+  data = {
+    password = base64encode(var.db_password)
+  }
 }
 
 # ---------------------------------------------------------------------------
@@ -179,3 +213,30 @@ resource "helm_release" "ingress_nginx" {
     value = "LoadBalancer"
   }
 }
+
+# ---------------------------------------------------------------------------
+# EKS managed addons. El cluster se crea via API con
+# bootstrap_cluster_creator_admin_permissions=false, por lo que EKS NO
+# auto-provisiona estos addons. Sin vpc-cni/coredns/kube-proxy los nodos
+# no pasan a Ready (NodeCreationFailure). Se crean explicitamente.
+# ---------------------------------------------------------------------------
+
+resource "aws_eks_addon" "vpc_cni" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "vpc-cni"
+}
+
+resource "aws_eks_addon" "coredns" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "coredns"
+}
+
+resource "aws_eks_addon" "kube_proxy" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "kube-proxy"
+}
+
+# Nota: aws-ebs-csi-driver se omite a proposito. La app no usa volumenes EBS
+# (PersistentVolumeClaims) y el addon quedaba DEGRADED por falta del IAM role
+# de IRSA. Si en el futuro necesitas StorageClasses EBS, agregar el addon con
+# su respectivo IAM Role para el service account.

@@ -1,8 +1,19 @@
-const fs = require("fs");
-const path = require("path");
+import { render, screen, act } from "@testing-library/react";
+import App from "../src/App.jsx";
 
-test("public/index.html existe y es HTML valido", () => {
-  const p = path.join(__dirname, "..", "public", "index.html");
-  expect(fs.existsSync(p)).toBe(true);
-  expect(fs.readFileSync(p, "utf8")).toMatch(/<html/i);
+jest.mock("../src/api.js", () => ({
+  getProducts: jest.fn().mockResolvedValue([]),
+  createProduct: jest.fn(),
+  updateProduct: jest.fn(),
+  deleteProduct: jest.fn(),
+}));
+
+test("renderiza el titulo de la tienda", async () => {
+  await act(async () => {
+    render(<App />);
+  });
+  await act(async () => {
+    await Promise.resolve();
+  });
+  expect(screen.getByText("CloudOps Store")).toBeInTheDocument();
 });
