@@ -185,3 +185,9 @@ Laboratorios y configuraciones prácticas utilizando Docker, Kubernetes y orques
 * opencode me recomendo agregar otra rama aparte de la main , solo en la main funcionara todo el sistema CI/CD , en la otra rama solo correra test de circle CI y te dira si no rompe nada ( ideal para 
 pruebas , agregar apis ,etc)
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d054dfa4-bcf1-4f99-abc8-98483b7617b6" />
+
+* la app en si funciono y las pruebas de pipeline tambien
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/71dea41e-5db5-44e1-8bc3-6a5212a5f0c2" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7c293615-c742-4d18-8835-4ad030f6b2fd" />
+
+* ahora queremoso algo mas complejo , queremos que nuestro frontend se vea mejor , que nuestra base de datos y api funcionen tambien , para eso le daremos mejoras
