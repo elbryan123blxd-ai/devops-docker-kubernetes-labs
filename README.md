@@ -191,3 +191,9 @@ pruebas , agregar apis ,etc)
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7c293615-c742-4d18-8835-4ad030f6b2fd" />
 
 * ahora queremoso algo mas complejo , queremos que nuestro frontend se vea mejor , que nuestra base de datos y api funcionen tambien , para eso le daremos mejoras
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f21be20f-cc6b-4cf3-883a-03a9c4fe82fc" />
+
+* aca este el RDS , para ver la base de datos tenia q ser un servicio aurora :C ,proximamente
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/674725a8-ec23-4fcf-a788-270d46409051" />
+
+* gracias a todos por ver  , pronto hare un proyecto mejor donde lo publicare a youtube y le dare mejoras
