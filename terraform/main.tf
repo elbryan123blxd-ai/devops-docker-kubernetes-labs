@@ -124,7 +124,7 @@ resource "kubernetes_secret" "api_db_secret" {
   }
 
   data = {
-    password = base64encode(var.db_password)
+    password = var.db_password
   }
 }
 
