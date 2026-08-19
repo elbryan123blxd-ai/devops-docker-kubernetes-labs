@@ -39,7 +39,15 @@ resource "aws_db_instance" "main" {
   vpc_security_group_ids    = [aws_security_group.rds.id]
   storage_encrypted         = true
   skip_final_snapshot       = false
-  final_snapshot_identifier = "app-postgres-final-${formatdate("YYYYMMDD-hhmm", timestamp())}"
+  final_snapshot_identifier = "app-postgres-final"
+
+  lifecycle {
+    # Protege la base de datos de un 'terraform destroy' accidental.
+    # Para tirar el resto de la infra sin borrar la DB:
+    #   terraform state rm module.rds
+    #   terraform destroy
+    prevent_destroy = true
+  }
 
   tags = {
     Name = "app-postgres-db"
