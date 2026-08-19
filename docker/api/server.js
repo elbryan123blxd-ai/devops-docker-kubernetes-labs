@@ -100,6 +100,71 @@ app.delete("/api/products/:id", async (req, res) => {
   res.status(204).end();
 });
 
+// Visor de tablas de solo lectura contra la RDS (lab). Se consulta desde
+// dentro del cluster, donde la BD es alcanzable, sin exponer la RDS publicamente.
+app.get("/api/viewer", (req, res) => {
+  const html = `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Visor de tablas - RDS</title>
+<style>
+  body{font-family:system-ui,Arial,sans-serif;margin:2rem;background:#0f172a;color:#e2e8f0}
+  textarea{width:100%;height:90px;font-family:monospace;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:8px;padding:.6rem}
+  button{margin-top:.6rem;padding:.5rem 1rem;border:0;border-radius:8px;background:#22c55e;color:#04210f;font-weight:600;cursor:pointer}
+  table{border-collapse:collapse;margin-top:1rem;width:100%}
+  th,td{border:1px solid #334155;padding:.4rem .6rem;text-align:left}
+  th{background:#1e293b}
+  .err{color:#f87171;margin-top:1rem}
+  code{background:#1e293b;padding:0 .3rem;border-radius:4px}
+</style>
+</head>
+<body>
+  <h2>Visor de tablas (RDS / Postgres - solo lectura)</h2>
+  <p>Corre consultas SELECT contra tu base de datos en AWS. Ej: <code>SELECT * FROM products</code> o <code>SELECT table_name FROM information_schema.tables WHERE table_schema='public'</code></p>
+  <textarea id="sql">SELECT * FROM products</textarea><br/>
+  <button onclick="run()">Ejecutar</button>
+  <div id="out"></div>
+  <script>
+    function run(){
+      var sql=document.getElementById('sql').value;
+      var out=document.getElementById('out');
+      out.innerHTML='<p>Ejecutando...</p>';
+      fetch('/api/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sql:sql})})
+        .then(function(r){return r.json().then(function(j){return {ok:r.ok,body:j};});})
+        .then(function(x){
+          if(!x.ok){out.innerHTML='<p class="err">Error: '+(x.body.error||'desconocido')+'</p>';return;}
+          var cols=x.body.columns||[]; var rows=x.body.rows||[];
+          if(cols.length===0){out.innerHTML='<p>Sin columnas. Filas: '+rows.length+'</p>';return;}
+          var h='<table><thead><tr>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>';
+          for(var i=0;i<rows.length;i++){h+='<tr>'+cols.map(function(c){return '<td>'+esc(rows[i][c])+'</td>';}).join('')+'</tr>';}
+          h+='</tbody></table><p>'+rows.length+' fila(s)</p>';
+          out.innerHTML=h;
+        })
+        .catch(function(e){out.innerHTML='<p class="err">'+e+'</p>';});
+    }
+    function esc(v){if(v===null)return 'NULL';return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  </script>
+</body>
+</html>`;
+  res.send(html);
+});
+
+app.post("/api/query", async (req, res) => {
+  const sql = (req.body && req.body.sql) || "";
+  const upper = sql.trim().toUpperCase();
+  // Solo lectura: bloquea cualquier cosa que no sea SELECT/WITH/SHOW/TABLE.
+  if (!/^(SELECT|WITH|SHOW|TABLE)\b/.test(upper)) {
+    return res.status(400).json({ error: "Solo consultas de lectura (SELECT / WITH / SHOW / TABLE)." });
+  }
+  try {
+    const r = await pool.query(sql);
+    res.json({ columns: (r.fields || []).map((f) => f.name), rows: r.rows });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Reintenta la conexion a la BD para no crash-loop si RDS tarda en estar listo.
 async function start() {
   let connected = false;
